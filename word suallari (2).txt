@@ -1,0 +1,247 @@
+-- aQuestion 01
+Write an SQL query to fetch last_name and job_id columns of table HR.Employees with the job_id starting with ‘SA’ or ‘ST’. Order the rows starting with longest last_name.
+
+SELECT last_name, job_id
+FROM HR.Employees
+WHERE job_id LIKE 'SA%' OR job_id LIKE 'ST%'
+ORDER BY LENGTH(last_name) DESC;
+
+
+--Question 02
+Write an SQL query to fetch first name, last name and department name of the employees from tables HR.Employees and HR.Departments with department_id being equals to or less than 50. Order by the first name (From Z to A).
+
+
+SELECT e.first_name, e.last_name, d.department_name
+FROM HR.Employees e
+JOIN HR.Departments d ON e.department_id = d.department_id
+WHERE e.department_id <= 50
+ORDER BY e.first_name DESC;
+
+
+
+--Question 03
+By using tables HR.Employees, HR.Departments and HR.Locations, write an sql query to fetch department id, department name and city of departments that has no employees.
+
+SELECT d.department_id, d.department_name, l.city
+FROM HR.Departments d
+JOIN HR.Locations l ON d.location_id = l.location_id
+WHERE d.department_id NOT IN (
+    SELECT DISTINCT e.department_id
+    FROM HR.Employees e);
+
+
+---Question 04
+By using tables HR.Employees, HR.Departments, HR.Locations and HR.Countries, write an sql query to fetch country id and country name of the countries that has more than 30 employees.
+
+
+SELECT c.country_id, c.country_name
+FROM HR.Countries c
+JOIN HR.Locations l ON c.country_id = l.country_id
+JOIN HR.Departments d ON l.location_id = d.location_id
+JOIN HR.Employees e ON d.department_id = e.department_id
+GROUP BY c.country_id, c.country_name
+HAVING COUNT(e.employee_id) > 30;
+
+
+----Question 05
+By using tables HR.Employees and HR.Departments, write an sql query to fetch first name, salary and department name of the employees with the least amount of salary in each department.
+
+
+SELECT e.first_name, e.salary, d.department_name
+FROM HR.Employees e
+JOIN HR.Departments d ON e.department_id = d.department_id
+WHERE e.salary = (
+    SELECT MIN(e1.salary)
+    FROM HR.Employees e1
+    WHERE e1.department_id = e.department_id
+);
+
+
+---------------------------------------------------------------------------------
+
+---Question 01
+Write an SQL query to fetch first_name and job_id columns of table HR.Employees with the job_id ending with ‘PROG’ or ‘MAN’. Order the rows starting with shortest first_name.
+selet
+
+SELECT first_name, job_id
+FROM HR.Employees
+WHERE job_id LIKE '%PROG' OR job_id LIKE '%MAN'
+ORDER BY LENGTH(first_name), first_name;
+
+
+---Question 02
+Write an SQL query to fetch first name, last name and department name of the employees from tables HR.Employees and HR.Departments with department_id being equals to or more than 70. Order by the first name (From Z to A).
+
+
+SELECT e.first_name, e.last_name, d.department_name
+FROM HR.Employees e
+JOIN HR.Departments d ON e.department_id = d.department_id
+WHERE e.department_id >= 70
+ORDER BY e.first_name DESC;
+
+
+
+---Question 03
+By using tables HR.Employees, HR.Departments and HR.Locations, write an sql query to fetch department id, department name and street address of departments that has no employees.
+
+
+SELECT d.department_id, d.department_name, l.street_address
+FROM HR.Departments d
+JOIN HR.Locations l ON d.location_id = l.location_id
+WHERE d.department_id NOT IN (
+    SELECT DISTINCT e.department_id
+    FROM HR.Employees e
+);
+
+
+
+-----Question 04
+By using tables HR.Employees, HR.Departments, HR.Locations and HR.Countries, write an sql query to fetch country id and country name of the countries that has less than 30 employees.
+
+
+SELECT c.country_id, c.country_name
+FROM HR.Countries c
+JOIN HR.Locations l ON c.country_id = l.country_id
+JOIN HR.Departments d ON l.location_id = d.location_id
+JOIN HR.Employees e ON d.department_id = e.department_id
+GROUP BY c.country_id, c.country_name
+HAVING COUNT(e.employee_id) < 30;
+
+
+----Question 05
+By using tables HR.Employees and HR.Departments, write an sql query to fetch first name, salary and department name of the employees with the most amount of salary in each department.
+
+
+SELECT e.first_name, e.salary, d.department_name
+FROM HR.Employees e
+JOIN HR.Departments d ON e.department_id = d.department_id
+WHERE e.salary = (
+    SELECT MAX(e1.salary)
+    FROM HR.Employees e1
+    WHERE e1.department_id = e.department_id
+);
+
+
+---------------------------------------------------------------------------------
+
+---Question 01.
+From the employees and departments tables, write a SQL query to find all departments, including those without employees. Return first_name, last_name and department_name.
+
+
+SELECT e.first_name, e.last_name, d.department_name
+FROM HR.Departments d
+LEFT JOIN HR.Employees e ON d.department_id = e.department_id;
+
+
+-----Question 02.
+Write a sql query to find departments that have less than five employees.
+
+SELECT department_id
+FROM hr.employees
+GROUP BY department_id
+HAVING COUNT(employee_id) < 5;
+
+
+------Question 03.
+Write a sql query to find employees who earn greater than the average salary for  their department.
+
+
+SELECT e.employee_id, e.first_name, e.last_name, e.salary, e.department_id
+FROM hr.employees e
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM hr.employees e2
+    WHERE e2.department_id = e.department_id
+);
+
+
+---Question 04.
+Write an SQL query to find the 5th highest salary in the employees table.
+
+SELECT salary
+FROM (
+    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank
+    FROM hr.employees
+)
+WHERE rank = 5;
+
+
+
+-----Question 05.
+From the employees table, write a SQL query to find the names of the employees whose length is six. Return employee names.
+
+
+SELECT first_name
+FROM hr.employees
+WHERE LENGTH(first_name) = 6;
+
+---------------------------------------------------------------------------------
+
+
+---Question 01
+Write a sql query to find the unique values of manager id from the employees table.
+
+
+SELECT DISTINCT manager_id
+FROM hr.employees;
+
+
+
+----Question 02
+Show the first part of street address (based on space) for which whose country_id are US or CH.
+
+
+SELECT SUBSTR(street_address, 1, INSTR(street_address, ' ') - 1) AS first_part_street
+FROM hr.employees
+WHERE country_id IN ('US', 'CH');
+
+
+
+-----Question 03
+From the employees and departments tables, write a SQL query to find first names, last names and department name of those employees whose commissions range from 0.1 to 0.6 ( 0.1 and 0.6 are included)
+
+
+SELECT e.first_name, e.last_name, d.department_name
+FROM hr.employees e
+JOIN hr.departments d ON e.department_id = d.department_id
+WHERE e.commission_pct BETWEEN 0.1 AND 0.6;
+
+
+
+----Question 04
+Create a query that will display the total number of employees and, of that total, the number of 
+employees hired in 2001, 2003, 2005, and 2006. Create appropriate column headings. 
+Total, y-2001, y-2003, y-2005, y-2006
+
+SELECT 
+    COUNT(*) AS Total,
+    SUM(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2001 THEN 1 ELSE 0 END) AS "y-2001",
+    SUM(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2003 THEN 1 ELSE 0 END) AS "y-2003",
+    SUM(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2005 THEN 1 ELSE 0 END) AS "y-2005",
+    SUM(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2006 THEN 1 ELSE 0 END) AS "y-2006"
+FROM 
+    hr.employees;
+
+
+---Question 05
+Display the employee last name and employee’s id along with their manager’s last name and manager’s id. Label the columns Employee, Emp#, Manager, and Mgr#, respectively.
+
+
+SELECT 
+    e.last_name AS "Employee",
+    e.employee_id AS "Emp#",
+    m.last_name AS "Manager",
+    m.employee_id AS "Mgr#"
+FROM 
+    hr.employees e
+LEFT JOIN 
+    hr.employees m ON e.manager_id = m.employee_id;
+
+
+
+
+
+
+
+
+
